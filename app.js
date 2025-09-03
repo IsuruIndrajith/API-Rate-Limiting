@@ -1,12 +1,22 @@
 //IMPORT PACKAGE
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit')
 const moviesRouter = require('./Routes/moviesRoutes');
 const authRouter = require('./Routes/authRouter')
 const CustomError = require('./Utils/CustomError');
 const globalErrorHandler = require('./Controllers/errorController')
 
 let app = express();
+
+let limiter = rateLimit({
+    max: 3,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too many requests from this IP, please try again later!'
+});
+
+// use the rate limiter on all the APIs that are starting with /api
+app.use('/api', limiter);
 
 app.use(express.json());
 
